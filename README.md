@@ -8,7 +8,8 @@ This is a simple chat demo by using Node.js and Socket.IO.
 - cd wqs_node
 - npm init
 - npm install express --save
-'''
+
+```
 在index.js写入：
 var express = require('express');
 var app = express();
@@ -18,11 +19,14 @@ app.get('/', function(res, rep) {
 });
 
 app.listen(3000);
-'''
+```
+
 - npm index.js 访问localhost就会出现hello world 然后继续下面步骤
 - npm install --save socket.io
 - 将index.js改写成与本案例index.js
-'''
+
+
+```
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -96,7 +100,7 @@ io.on('connection', function(socket){
 http.listen(3000, function(){
 	console.log('listening on *:3000');
 });
-'''
+```
 
 - 打开 index.html 或者 http://localhost:3000/socket页面 输入昵称后  即可使用聊天服务 
 
