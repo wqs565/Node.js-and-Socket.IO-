@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+<canvas width="1200" height="800"></canvas>
+</body>
+<script src="https://show-resource.mumov.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jcanvas/16.7.3/jcanvas.min.js"></script>
+<script src="https://projects.calebevans.me/jcanvas/assets/jcanvas/plugins/jcanvas-handles.min.js"></script>
+<script>
+    function invert(params) {
+        $(this).setPixels({
+            x: params.eventX, y: params.eventY,
+            width: 100, height: 100,
+            // loop through each pixel
+            each: function(px) {
+                px.r = 255 - px.r;
+                px.g = 255 - px.g;
+                px.b = 255 - px.b;
+            }
+        });
+    }
+
+//    $('canvas').drawImage({
+//        layer: true,
+//        source: 'http://show-resource.mumov.com/class1-4.png',
+//        x: 150, y: 10,
+//        draggable: true,
+//        mousemove: function (layer) {
+//
+//        },
+//        click: function(layer) {
+//            // Click a star to spin it
+//
+//        }
+//    });
+//    $('canvas').addLayer({
+//        type: 'image',
+//        draggable: true,
+//        source: 'http://show-resource.mumov.com/class1-4.png',
+//        fillStyle: '#fff',
+//        strokeStyle: '#c33',
+//        strokeWidth: 2,
+//        x: 180, y: 150,
+//        width: 200, height: 125,
+//        handle: {
+//            type: 'arc',
+//            fillStyle: '#fff',
+//            strokeStyle: '#c33',
+//            strokeWidth: 2,
+//            radius: 10
+//        },
+//    })
+//            .drawLayers();
+    $('canvas').addLayer({
+        layer: true,
+        name: 'mybox',
+        type: 'image',
+        draggable: true,
+//        bringToFront: true,
+        source: 'http://show-resource.mumov.com/class2-4.png',
+        fillStyle: '#fff',
+        strokeStyle: '#c33',
+        strokeWidth: 2,
+        x: 180, y: 150,
+        width: 200, height: 125,
+        index:1,
+        handle: {
+            type: 'arc',
+            fillStyle: '#fff',
+            strokeStyle: '#c33',
+            strokeWidth: 0,
+            radius: 10
+        },
+        change: function(layer, props) {
+            console.log(1)
+            // code to run when layer properties are changed
+        },
+        mouseover: function (layer) {
+            console.log(layer);
+            for(var i = 0;i<layer._handles.length;i++){
+                layer._handles[i].strokeWidth= 1;
+            }
+
+        },
+        handlestart: function(layer) {
+            console.log(1)
+        // code to run when resizing starts
+        },
+        handlemove: function(layer) {
+        // code to run while resizing
+            console.log(2)
+         },
+        handlestop: function(layer) {
+            for(var i = 0;i<layer._handles.length;i++){
+                layer._handles[i].strokeWidth= 0;
+            }
+            // code to run while resizing stops
+        },
+        rotate_fun: function (layer) {
+            $(this).animateLayer(layer, {
+                rotate: '+=180'
+            })
+        }
+    }).drawLayers();
+
+    $('canvas').addLayer({
+        layer: true,
+        type: 'image',
+        draggable: true,
+//        bringToFront: true,
+        source: 'http://show-resource.mumov.com/class2-3.png',
+        fillStyle: '#fff',
+        strokeStyle: '#c33',
+        strokeWidth: 2,
+        x: 180, y: 150,
+        width: 200, height: 125,
+        index:2,
+        handle: {
+            type: 'arc',
+            fillStyle: '#fff',
+            strokeStyle: '#c33',
+            strokeWidth: 0,
+            radius: 10
+        },
+        change: function(layer, props) {
+            console.log(1)
+            // code to run when layer properties are changed
+        },
+        mouseover: function (layer) {
+            console.log(layer);
+            for(var i = 0;i<layer._handles.length;i++){
+                layer._handles[i].strokeWidth= 1;
+            }
+
+        },
+        click: function (layer) {
+            $(this).animateLayer(layer, {
+                 rotate: '+=180'
+            })
+        },
+        handlestart: function(layer) {
+            console.log(1)
+            // code to run when resizing starts
+        },
+        handlemove: function(layer) {
+            // code to run while resizing
+            console.log(2)
+        },
+        handlestop: function(layer) {
+            for(var i = 0;i<layer._handles.length;i++){
+                layer._handles[i].strokeWidth= 0;
+            }
+            // code to run while resizing stops
+        }
+    }).drawLayers();
+
+    document.onclick = function () {
+        console.log('y')
+        $('canvas').getLayer('mybox').rotate_fun($('canvas').getLayer('mybox'));
+//        $('canvas').drawLayers();
+    }
+    $('canvas').drawRect({
+        fillStyle: '#c33',
+        x: 200, y: 100,
+        width: 150, height: 80,
+        rotate: 30
+    });
+</script>
+</html>

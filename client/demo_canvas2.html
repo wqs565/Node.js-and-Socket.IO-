@@ -1,0 +1,260 @@
+<html>
+<head>
+</head>
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+    }
+    .box {
+        background: #006e9c;
+        position: absolute;
+        cursor: move;
+    }
+    .scale{
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        background: rgba(0,0,0,0.6);
+        z-index: 999;
+        cursor: nesw-resize;
+    }
+    #left_top{
+        left: -5px;
+        top: -5px;
+    }
+    #right_top{
+        right: -5px;
+        top: -5px;
+    }
+    #left_bottom{
+        left: -5px;
+        bottom: -5px;
+    }
+    #right_bottom{
+        right: -5px;
+        bottom: -5px;
+    }
+    #canvas{
+        display: block;
+        position: absolute;
+    }
+</style>
+<body onload="draw();">
+<div class="box" id="box">
+    <div id="left_top" class="scale"></div>
+    <div id="right_top" class="scale"></div>
+    <div id="left_bottom" class="scale"></div>
+    <div id="right_bottom" class="scale"></div>
+    <canvas id="canvas" ></canvas>
+</div>
+
+</body>
+<script type="application/javascript">
+
+
+    var big_wid = 300;
+    var big_hei = 300;
+    var big_y = 0;
+    var big_x = 0;
+    var tiny_x = big_wid/4;
+    var tiny_y = big_hei/4;
+    var tiny_wid = 80;
+    var tiny_hei = 80;
+    var box = document.getElementById("box");
+    var right_bottom = document.getElementById('right_bottom');
+    var canvas = document.getElementById("canvas");
+//    canvas.style.left = '0';
+//    canvas.style.top = '0';
+    box.style.width = big_wid+'px';
+    box.style.height = big_wid+'px';
+    box.style.left = 200+'px';
+    box.style.top = 200+'px';
+
+    box.onmousedown = function(e){
+        var e = e||window.event;
+        var that = this;
+        var oLeft = e.clientX - this.offsetLeft;
+        var oTop = e.clientY - this.offsetTop;
+        e.preventDefault();
+        document.onmousemove = function(e){
+            console.log(2222)
+            var e = e||window.event;
+            var nowLeft = e.clientX - oLeft;
+            console.log('1111111')
+            var nowTop = e.clientY - oTop;
+            that.style.left = nowLeft + "px";
+            that.style.top = nowTop + "px";
+            e.preventDefault();
+        }
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    };
+
+    right_bottom.onmousedown = function (e) {
+        var e = e||window.event;
+        e.cancelBubble = true;
+        e.stopPropagation();
+        var that = this;
+        document.onmousemove = function(e){
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var wid = e.clientX-box.offsetLeft+'px';
+            var hei = e.clientY-box.offsetTop+'px';
+            console.log(wid);
+            box.style.width = wid;
+            box.style.height = hei;
+            big_wid = parseInt(wid);
+            big_hei = parseInt(hei);
+            draw();
+        };
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    };
+
+    left_bottom.onmousedown = function (e) {
+        var e = e||window.event;
+        e.cancelBubble = true;
+        e.stopPropagation();
+        var that = this;
+        document.onmousemove = function(e){
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var wid = (box.offsetLeft-e.clientX+parseInt(box.style.width))+'px';
+            var hei = (e.clientY-box.offsetTop)+'px';
+            box.style.left = (parseInt(box.style.left)-(box.offsetLeft-e.clientX))+'px'
+            console.log((parseInt(box.style.left)-parseInt(box.offsetLeft-e.clientX))+'px')
+            console.log(wid);
+            box.style.width = wid;
+            box.style.height = hei;
+            big_wid = parseInt(wid);
+            big_hei = parseInt(hei);
+            draw();
+        };
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    };
+
+    right_top.onmousedown = function (e) {
+        var e = e||window.event;
+        e.cancelBubble = true;
+        e.stopPropagation();
+        var that = this;
+        document.onmousemove = function(e){
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var wid = (e.clientX-box.offsetLeft)+'px';
+            var hei = (box.offsetTop-e.clientY+parseInt(box.style.height))+'px';
+            box.style.top = parseInt(box.style.top)-(box.offsetTop-e.clientY)+'px';
+            console.log(box.style.top)
+            box.style.width = wid;
+            box.style.height = hei;
+            big_wid = parseInt(wid);
+            big_hei = parseInt(hei);
+            draw();
+        };
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    };
+
+    left_top.onmousedown = function (e) {
+        var e = e||window.event;
+        e.cancelBubble = true;
+        e.stopPropagation();
+        var that = this;
+        document.onmousemove = function(e){
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var wid = (box.offsetLeft-e.clientX+parseInt(box.style.width))+'px';
+            var hei = (box.offsetTop-e.clientY+parseInt(box.style.height))+'px';
+            box.style.left = (parseInt(box.style.left)-(box.offsetLeft-e.clientX))+'px';
+            box.style.top = parseInt(box.style.top)-(box.offsetTop-e.clientY)+'px';
+            box.style.width = wid;
+            box.style.height = hei;
+            big_wid = parseInt(wid);
+            big_hei = parseInt(hei);
+            draw();
+        };
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    };
+
+    function draw() {
+        tiny_wid = big_wid/4;
+        tiny_hei = big_hei/4;
+
+        canvas.setAttribute('width',big_wid);
+        canvas.setAttribute('height',big_hei);
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "rgb(191,191,191)";
+        ctx.fillRect (big_x, big_y, big_wid, big_wid);
+
+        ctx.fillStyle = "rgb(149, 149, 149)";
+        ctx.fillRect (tiny_x, tiny_y, tiny_wid, tiny_hei);
+        ctx.strokeStyle = "#111";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(big_x, big_y);//设置起点
+        ctx.lineTo(tiny_x, tiny_y);//画线
+        ctx.moveTo(big_wid, big_x);//拿起画笔到新坐标
+        ctx.lineTo(tiny_x+tiny_wid, tiny_y);//画线
+        ctx.moveTo(big_x, big_hei);//设置起点
+        ctx.lineTo(tiny_x, tiny_y+tiny_hei);//画线
+        ctx.moveTo(big_wid, big_hei);//拿起画笔到新坐标
+        ctx.lineTo(tiny_x+tiny_wid, tiny_y+tiny_hei);//画线
+        ctx.closePath();
+        ctx.stroke();
+        function isInPath (x, y){
+            ctx.fillRect (tiny_x, tiny_y, tiny_wid, tiny_hei);
+            return ctx.isPointInPath(x, y);
+        }
+        canvas.onmousedown = function (e) {
+            canvas.onmousemove = function(e){
+                var that = this;
+                var e = e||window.event;
+
+                if(e.offsetX>tiny_x&&e.offsetX<tiny_x+tiny_wid && e.offsetY>tiny_y&&e.offsetY<tiny_y+tiny_hei){
+                    e.cancelBubble = true;
+                    e.stopPropagation();
+                    tiny_x = e.offsetX-(tiny_wid/2);
+                    tiny_y = e.offsetY -(tiny_hei/2);
+                    draw()
+                }else{
+//                    var e = e||window.event;
+//                    var oLeft = e.clientX - box.offsetLeft;
+//                    var oTop = e.clientY - box.offsetTop;
+//                    var nowLeft = e.clientX - oLeft;
+//                    var nowTop = e.clientY - oTop;
+//                    console.log(nowLeft)
+//                    box.style.left = nowLeft + "px";
+//                    box.style.top = nowTop + "px";
+                    e.preventDefault();
+                };
+            }
+            canvas.onmouseup = function () {
+                canvas.onmousemove = null;
+                canvas.onmouseup = null;
+            }
+        }
+
+    }
+
+
+
+</script>
+</html>

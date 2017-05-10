@@ -1,0 +1,95 @@
+<html>
+<head>
+</head>
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+    }
+    .box {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    #canvas{
+        display: block;
+        position: absolute;
+        left: 200px;
+        top: 200px;
+    }
+</style>
+<body onload="draw();">
+<div class="box" id="box">
+    <canvas id="canvas" ></canvas>
+</div>
+
+</body>
+<script type="application/javascript">
+    var tiny_x = 105;
+    var tiny_y = 105;
+    var tiny_wid = 80;
+    var tiny_hei = 80;
+    var big_wid = 300;
+    var big_hei = 300;
+    var big_y = 0;
+    var big_x = 0;
+    var point_x = (tiny_x+tiny_wid/2);
+    var point_y = (tiny_y+tiny_hei/2);
+
+
+    function draw() {
+
+        var canvas = document.getElementById("canvas");
+        canvas.setAttribute('width',big_wid);
+        canvas.setAttribute('height',big_hei)
+        var ctx = canvas.getContext("2d");
+
+//        ctx.fillStyle = "rgb(191,191,191)";
+//        ctx.fillRect (big_x, big_y, big_wid, big_wid);
+
+        ctx.fillStyle = "rgb(149, 149, 149)";
+        ctx.fillRect (tiny_x, tiny_y, tiny_wid, tiny_hei);
+        ctx.strokeStyle = "#111";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(big_x, big_y);//设置起点
+        ctx.lineTo(tiny_x, tiny_y);//画线
+        ctx.lineTo(point_x, point_y);
+        ctx.moveTo(big_wid, big_x);//拿起画笔到新坐标
+        ctx.lineTo(tiny_x+tiny_wid, tiny_y);//画线
+        ctx.lineTo(point_x, point_y);
+        ctx.moveTo(big_x, big_hei);//设置起点
+        ctx.lineTo(tiny_x, tiny_y+tiny_hei);//画线
+        ctx.lineTo(point_x, point_y);
+        ctx.moveTo(big_wid, big_hei);//拿起画笔到新坐标
+        ctx.lineTo(tiny_x+tiny_wid, tiny_y+tiny_hei);//画线
+        ctx.lineTo(point_x, point_y);
+        ctx.closePath();
+        ctx.stroke();
+        function isInPath (x, y){
+            ctx.fillRect (tiny_x, tiny_y, tiny_wid, tiny_hei);
+            return ctx.isPointInPath(x, y);
+        }
+        canvas.onmousedown = function () {
+            canvas.onmousemove = function(e){
+//            if(isInPath(e.offsetX, e.offsetY)) {
+//                console.log('hello')
+//            }
+                if(e.offsetX>tiny_x&&e.offsetX<tiny_x+tiny_wid && e.offsetY>tiny_y&&e.offsetY<tiny_y+tiny_hei){
+                    console.log(e.offsetX)
+                    tiny_x = e.offsetX-(tiny_wid/2);
+                    tiny_y = e.offsetY -(tiny_hei/2);
+                    draw()
+                };
+            }
+            canvas.onmouseup = function () {
+                canvas.onmousemove = null;
+                canvas.onmouseup = null;
+            }
+        }
+
+    }
+
+
+</script>
+</html>

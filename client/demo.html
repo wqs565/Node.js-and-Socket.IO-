@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<style>
+    .btn{
+        float: left;
+        width: 100px;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+        color: #fff;
+        background: #ff486a;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        margin: 0 6px;
+    }
+    .hover{
+        display: none;
+    }
+    .box{
+        transform-style: preserve-3d;
+
+    }
+    .box:hover .hover{
+        display: block;
+    }
+    img{
+        transform-style: preserve-3d;
+    }
+    .body{
+        width: 1200px;
+        background: #ccc;
+        height: 600px;
+    }
+    #canvas{
+        display: block;
+        position: absolute;
+        bottom: -600px;
+        background: #ccc;
+    }
+</style>
+<body>
+<div class="btn">沙发1</div>
+<div class="btn">沙发2</div>
+<div class="btn">椅子</div>
+<div class="btn">床</div>
+<div class="btn">桌子</div>
+<div class="btn" id="save">保存</div>
+<div style="float: left;line-height: 34px;font-size: 12px;color: #ccc">上下左右为3d旋转</div>
+
+<div class="body" id="body">
+
+</div>
+
+<canvas id="canvas" ></canvas>
+<script>
+    function hecheng(){
+        draw(function(){
+            document.getElementById('imgBox').innerHTML='<p style="padding:10px 0">合成图片成功！可以鼠标另存图片查看我是否是一张图片~~！</p><img src="'+base64[0]+'">';
+        })
+    }
+    var imgs_arr = [];
+    var c=document.getElementById('canvas');
+    var base64=[];
+    c.width = 1200;
+    c.height = 600;
+    document.onclick =function () {
+        document.getElementById('save').onclick = function () {
+            imgs_arr = [];
+            var boxs = document.getElementsByClassName('box');
+            var c=document.getElementById('canvas');
+            var ctx=c.getContext('2d');
+            ctx.fillStyle='#fff';
+            ctx.fill();
+            for(var i = 0; i<boxs.length;i++){
+                var pic = new Object();
+                pic.src = boxs[i].lastChild.src;
+                pic.left = parseInt(boxs[i].style.left);
+                pic.top = parseInt(boxs[i].style.top);
+                pic.wid =parseInt(boxs[i].style.width);
+                pic.hei = parseInt(boxs[i].style.height);
+                imgs_arr.push(pic);
+            }
+            console.log(imgs_arr)
+            function drawing(n){
+                if(n<imgs_arr.length){
+                    console.log(1)
+                    var img=new Image;
+                    var left = parseInt(imgs_arr[n].left);
+                    var top = parseInt(imgs_arr[n].top);
+                    var wid = parseInt(imgs_arr[n].wid);
+                    var hei = parseInt(imgs_arr[n].hei);
+                    img.crossOrigin = 'Anonymous'; //解决跨域
+                    img.src=imgs_arr[n].src;
+
+                    img.onload=function(){
+                        ctx.drawImage(img,left,top,wid,hei);
+                        drawing(n+1);//递归
+                    }
+                }else{
+                    //保存生成作品图片
+                    base64.push(c.toDataURL("image/jpeg",0.8));
+                    //alert(JSON.stringify(base64));
+//                    fn();
+                    var img = canvas.toDataURL("image/png");
+                }
+            }
+            drawing(0);
+
+        }
+    }
+
+
+</script>
+<script type="text/javascript">
+    var imgs =['mj_shafa.png','mj_sofa.png','mj_yizi.jpeg','mj_bed.png','mj_zhuozi.png']
+    var ydeg = 0;
+    var xdeg = 0;
+    var btn = document.getElementsByClassName("btn");
+    var oBody = document.getElementById('body');
+    function getRan(min,max){
+        return Math.floor(Math.random()*(max-min+1))+min;
+    }
+    btn[0].onclick = function(){
+        var newDrag = new dragBox('0');
+    };
+    btn[1].onclick = function(){
+        var newDrag = new dragBox('1');
+    };
+    btn[2].onclick = function(){
+        var newDrag = new dragBox('2');
+    };
+    btn[3].onclick = function(){
+        var newDrag = new dragBox('3');
+    };
+    btn[4].onclick = function(){
+        var newDrag = new dragBox('4');
+    };
+    btn[5].onclick = function () {
+
+    };
+    function dragBox(num){
+        this.imgarr = num;
+        this.xdeg = 0;
+        this.ydeg = 0;
+        this.createBox();
+    }
+    dragBox.prototype.createBox = function(){
+        this.dragNode = document.createElement("div");
+        this.dragNode.className = 'box';
+//        this.dragNode.style.background = this.bgcolor;
+        console.log(this.imgarr+',,'+imgs[parseInt(this.imgarr)])
+        this.dragNode.style.width = '200px';
+        this.dragNode.style.height = '200px';
+        this.dragNode.style.zIndex = '9';
+        this.dragNode.style.position = "absolute";
+        this.dragNode.style.left = "0";
+        this.dragNode.style.top = "0";
+        this.dragNode.style.background = 'url(http://show-resource.mumov.com/'+imgs[parseInt(this.imgarr)]+') center center noRepeat';
+        this.dragNode.style.backgroundSize = '100% 100%';
+
+        this.img = document.createElement('img');
+        this.img.src = 'http://show-resource.mumov.com/'+imgs[parseInt(this.imgarr)];
+        this.img.style.cssText = 'width:100%;height:100%;display:block;transform:rotateZ(0deg) rotateX(0deg) rotateY(0deg);zIndex:1;';
+
+        this.leftTop = document.createElement('div');
+        this.rightTop = document.createElement('div');
+        this.leftBottom = document.createElement('div');
+        this.rightBottom = document.createElement('div');
+
+        this.leftTop.style.cssText = 'position: absolute;width: 10px;height:10px;left: -5px;top:-5px;background:rgba(0,0,0,0.5);cursor:nwse-resize;';
+        this.rightTop.style.cssText = 'position: absolute;width: 10px;height:10px;right: -5px;top:-5px;background:rgba(0,0,0,0.5);cursor:nesw-resize;';
+        this.leftBottom.style.cssText = 'position: absolute;width: 10px;height:10px;left: -5px;bottom:-5px;background:rgba(0,0,0,0.5);cursor:nesw-resize;';
+        this.rightBottom.style.cssText = 'position: absolute;width: 10px;height:10px;right: -5px;bottom:-5px;background:rgba(0,0,0,0.5);cursor:nwse-resize;';
+
+        this.left = document.createElement('div');
+        this.top = document.createElement('div');
+        this.right = document.createElement('div');
+        this.bottom = document.createElement('div');
+
+        this.left.innerHTML = '<';
+        this.right.innerHTML = '>';
+        this.top.innerHTML = '上';
+        this.bottom.innerHTML = '下';
+        this.left.style.cssText = 'position: absolute;width: 20px;height:20px;left: -60px;top:50%;marginTop:-10px;cursor:pointer;z-index:999;';
+        this.right.style.cssText = 'position: absolute;width: 20px;height:20px;right: -60px;top:50%;marginTop: -10px;textAlign:right;cursor:pointer;z-index:999;';
+        this.top.style.cssText = 'position: absolute;width: 20px;height:20px;left: 50%;marginLeft: -10px;top: -60px;cursor:pointer;z-index:999;';
+        this.bottom.style.cssText = 'position: absolute;width: 20px;height:20px;left: 50%;marginLeft:-10px;bottom:-60px;cursor:pointer;z-index:999;';
+
+
+//        this.dragBox.style.width = (parseInt(this.dragNode.style.width)+10)+'px';
+//        this.dragBox.style.height = (parseInt(this.dragNode.style.height)+10)+'px';
+//        this.dragBox.style.background = '#0048ff';
+
+        this.leftTop.className = 'hover';
+        this.rightTop.className = 'hover';
+        this.leftBottom.className = 'hover';
+        this.rightBottom.className = 'hover';
+        this.leftTop.className = 'hover';
+        this.leftTop.className = 'hover';
+        this.leftTop.className = 'hover';
+        this.leftTop.className = 'hover';
+
+        this.dragNode.appendChild(this.leftTop);
+        this.dragNode.appendChild(this.rightTop);
+        this.dragNode.appendChild(this.leftBottom);
+        this.dragNode.appendChild(this.rightBottom);
+
+        this.dragNode.appendChild(this.left);
+        this.dragNode.appendChild(this.right);
+        this.dragNode.appendChild(this.top);
+        this.dragNode.appendChild(this.bottom);
+        this.dragNode.appendChild(this.img);
+        oBody.appendChild(this.dragNode);
+
+//        3d旋转
+        var oimg = this.img;
+        var xdeg = this.xdeg;
+        var ydeg = this.ydeg;
+        this.left.onclick = function () {
+            xdeg+=8;
+            console.log(xdeg)
+            oimg.style.transform = "rotateY("+xdeg+"deg) rotateZ("+ydeg+"deg)";
+        }
+        this.right.onclick = function () {
+            xdeg-=8;
+            console.log(xdeg)
+            oimg.style.transform = "rotateY("+xdeg+"deg) rotateZ("+ydeg+"deg)";
+        }
+        this.top.onclick = function () {
+            ydeg+=8;
+            console.log(xdeg)
+            oimg.style.transform = "rotateY("+xdeg+"deg) rotateZ("+ydeg+"deg)";
+        }
+        this.bottom.onclick = function () {
+            ydeg-=8;
+            console.log(xdeg)
+            oimg.style.transform = "rotateY("+xdeg+"deg) rotateZ("+ydeg+"deg)";
+        }
+
+        this.dragNode.onmousedown = function(e){
+            var e = e||window.event;
+            var that = this;
+            var oLeft = e.clientX - this.offsetLeft;
+            var oTop = e.clientY - this.offsetTop;
+            e.preventDefault();
+            document.onmousemove = function(e){
+                var e = e||window.event;
+                var nowLeft = e.clientX - oLeft;
+                var nowTop = e.clientY - oTop;
+                that.style.left = nowLeft + "px";
+                that.style.top = nowTop + "px";
+                e.preventDefault();
+            }
+            document.onmouseup = function(){
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        };
+
+        var box = this.dragNode;
+        this.leftTop.onmousedown = function (e) {
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var that = this;
+            document.onmousemove = function(e){
+                var e = e||window.event;
+                e.cancelBubble = true;
+                e.stopPropagation();
+                var wid = (box.offsetLeft-e.clientX+parseInt(box.style.width))+'px';
+                var hei = (box.offsetTop-e.clientY+parseInt(box.style.height))+'px';
+                box.style.left = (parseInt(box.style.left)-(box.offsetLeft-e.clientX))+'px';
+                box.style.top = parseInt(box.style.top)-(box.offsetTop-e.clientY)+'px';
+                box.style.width = wid;
+                box.style.height = hei;
+            };
+            document.onmouseup = function(){
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        };
+        this.rightTop.onmousedown = function (e) {
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var that = this;
+            document.onmousemove = function(e){
+                var e = e||window.event;
+                e.cancelBubble = true;
+                e.stopPropagation();
+                var wid = (e.clientX-box.offsetLeft)+'px';
+                var hei = (box.offsetTop-e.clientY+parseInt(box.style.height))+'px';
+                console.log(wid);
+                box.style.top = parseInt(box.style.top)-(box.offsetTop-e.clientY)+'px';
+                console.log(box.style.top)
+                box.style.width = wid;
+                box.style.height = hei;
+            };
+            document.onmouseup = function(){
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        };
+        this.leftBottom.onmousedown = function (e) {
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var that = this;
+            document.onmousemove = function(e){
+                var e = e||window.event;
+                e.cancelBubble = true;
+                e.stopPropagation();
+                var wid = (box.offsetLeft-e.clientX+parseInt(box.style.width))+'px';
+                var hei = (e.clientY-box.offsetTop)+'px';
+                box.style.left = (parseInt(box.style.left)-(box.offsetLeft-e.clientX))+'px'
+                box.style.width = wid;
+                box.style.height = hei;
+            };
+            document.onmouseup = function(){
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        };
+        this.rightBottom.onmousedown = function (e) {
+            var e = e||window.event;
+            e.cancelBubble = true;
+            e.stopPropagation();
+            var that = this;
+            document.onmousemove = function(e){
+                var e = e||window.event;
+                e.cancelBubble = true;
+                e.stopPropagation();
+                var wid = e.clientX-box.offsetLeft+'px';
+                var hei = e.clientY-box.offsetTop+'px';
+                console.log(wid);
+                box.style.width = wid;
+                box.style.height = hei;
+            };
+            document.onmouseup = function(){
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        };
+    }
+</script>
+
+</body>
+</html>

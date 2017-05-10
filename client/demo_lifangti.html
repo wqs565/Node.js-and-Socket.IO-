@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Untitled Document</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+</head>
+<style>
+    /*@keyframes rotate {*/
+        /*0% {*/
+            /*transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg)*/
+        /*}*/
+        /*100% {*/
+            /*transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg)*/
+        /*}*/
+    /*}*/
+
+    html ,body{
+        /*background: linear-gradient(#0f0 0%, #000 95%);*/
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .cube {
+        cursor: move;
+        position: absolute;
+        transform-style: preserve-3d;
+        /*animation: rotate 6s infinite linear;*/
+        left: 300px;
+        top: 100px;
+        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) perspective(300px);
+
+    }
+
+    .cube>div {
+        position: absolute;
+        background: rgba(0,0,0,0.1);
+        border: 1px solid #ccc;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        color: #fff;
+        font-size: 36px;
+        font-family: '楷体';
+        font-weight: bold;
+        text-align: center;
+    }
+    .cube>div>img{width:100%;height:100%;display: none;}
+    .cube .out-front {
+        transform: translateZ(-150px) rotateY(180deg);
+        /*transition: all linear 0.5s;*/
+    }
+
+    .cube .out-back {
+        transform: translateZ(150px) rotateY(180deg);
+        /*transition: all linear 0.5s;*/
+    }
+
+    .cube .out-left {
+        transform: translateX(-100px) rotateY(90deg);
+        /*transition: all linear 0.5s;*/
+    }
+
+    .cube .out-right {
+        transform: translateX(100px) rotateY(-90deg);
+        /*transition: all linear 0.5s;*/
+    }
+
+    .cube .out-top {
+        transform: translateY(-100px) rotateX(90deg);
+        /*transition: all linear 0.5s;*/
+    }
+
+    .cube .out-bottom {
+        transform: translateY(100px) rotateX(-90deg);
+        /*transition: all linear 0.5s;*/
+    }
+
+    /*.wrap:hover .out-front {*/
+        /*transform: translateZ(-300px) rotateY(180deg);*/
+    /*}*/
+
+    /*.wrap:hover .out-back {*/
+        /*transform: translateZ(300px) rotateY(180deg);*/
+    /*}*/
+
+    /*.wrap:hover .out-left {*/
+        /*transform: translateX(-300px) rotateY(90deg);*/
+    /*}*/
+
+    /*.wrap:hover .out-right {*/
+        /*transform: translateX(300px) rotateY(-90deg);*/
+    /*}*/
+
+    /*.wrap:hover .out-top {*/
+        /*transform: translateY(-300px) rotateX(90deg);*/
+    /*}*/
+
+    /*.wrap:hover .out-bottom {*/
+        /*transform: translateY(300px) rotateX(-90deg);*/
+    /*}*/
+
+
+    .point{
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        background: rgba(0,0,0,0.6);
+        z-index: 9;
+    }
+    #x,#y,#z{
+        float: left;
+        margin: 6px;
+    }
+    #point1{
+        left: -5px;
+        top: -5px;
+    }
+    #point2{
+        right: -5px;
+        top: -5px;
+    }
+    #point3{
+        left: -5px;
+        bottom: -5px;
+    }
+    #point4{
+        right: -5px;
+        bottom: -5px;
+    }
+    .btn{
+        width: 72px;
+        height: 34px;
+        line-height: 34px;
+        color: #fff;
+        margin: 0 6px;
+        float: left;
+        background: #ff486a;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+<script src="https://show-resource.mumov.com/jquery-3.1.1.min.js"></script>
+
+<body>
+    <div class="cube" id="cube">
+        <div class="out-front" id="front"></div>
+        <div class="out-back" id="back">
+            <div class="point" id="point1"></div>
+            <div class="point" id="point2"></div>
+            <div class="point" id="point3"></div>
+            <div class="point " id="point4"></div>
+        </div>
+        <div class="out-left" id="left"></div>
+        <div class="out-right" id="right"></div>
+        <div class="out-top" id="top"></div>
+        <div class="out-bottom" id="bottom"></div>
+    </div>
+
+<input type="text" value="" id="x" placeholder="请输入长">
+<input type="text" value="" id="y" placeholder="请输入宽">
+<input type="text" value="" id="z" placeholder="请输入高">
+<div id="draw_btn" class="btn">确认</div>
+<div id="big" class="btn">放大</div>
+<div id="tiny" class="btn">缩小</div>
+<div id="left_btn" class="btn">视角左转</div>
+<div id="right_btn" class="btn">视角右转</div>
+<div id="top_btn" class="btn">视角上转</div>
+<div id="bottom_btn" class="btn">视角下转</div>
+
+</body>
+<script>
+    var x = 100;
+    var y = 200;
+    var z = 100;
+    var xdeg = 0;
+    var ydeg = 0;
+    var yscale = y/x;
+    var zscale = z/x;
+
+
+    var cube = document.getElementById('cube');
+    var sure = document.getElementById('draw_btn');var big = document.getElementById('big');var tiny = document.getElementById('tiny');
+
+    var top1 =document.getElementById('top');
+    var left =document.getElementById('left');
+    var right =document.getElementById('right');
+    var bottom =document.getElementById('bottom');
+    var front =document.getElementById('front');
+    var back =document.getElementById('back');
+
+    var point4 = document.getElementById('point4');
+    function draw(x,y,z) {
+        var cube = document.getElementById('cube');
+        console.log(cube.style.left);
+        cube.style.cssText = 'width:'+y+'px;height:'+z+'px;transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) perspective('+x+'px);left: '+cube.style.left+';top:'+cube.style.top+';'
+
+        back.style.cssText= 'width:'+y+'px;height:'+z+'px;transform: translateZ('+(x/2)+'px) rotateY(0deg);';
+        front.style.cssText= 'width:'+y+'px;height:'+z+'px;transform: translateZ(-'+(x/2)+'px) rotateY(0deg);';
+        left.style.cssText= 'width:'+x+'px;height:'+z+'px;transform: translateX(-'+(x/2)+'px) rotateY(90deg);';
+        right.style.cssText= 'width:'+x+'px;height:'+z+'px;transform: translateX('+(y-(x/2))+'px) rotateY(90deg);translateX('+y+'px);';
+        bottom.style.cssText= 'width:'+y+'px;height:'+x+'px;transform: translateY('+(z-(x/2))+'px) rotateX(90deg);';
+        top1.style.cssText= 'width:'+y+'px;height: '+x+'px;transform: translateY(-'+(x/2)+'px) rotateX(90deg);';
+
+    }
+    draw(x,y,z);
+
+    cube.onmousedown = function(e){
+        var e = e||window.event;
+        var that = this;
+        var oLeft = e.clientX - this.offsetLeft;
+        var oTop = e.clientY - this.offsetTop;
+        e.preventDefault();
+        document.onmousemove = function(e){
+            var e = e||window.event;
+            var nowLeft = e.clientX - oLeft;
+            var nowTop = e.clientY - oTop;
+            that.style.left = nowLeft + "px";
+            that.style.top = nowTop + "px";
+            e.preventDefault();
+        }
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    };
+
+//    point4.onmousedown = function (e) {
+//        var e = e||window.event;
+//        e.cancelBubble = true;
+//        e.stopPropagation();
+//        var that = this;
+//        document.onmousemove = function(e){
+//
+//            var e = e||window.event;
+//            e.cancelBubble = true;
+//            e.stopPropagation();
+////            var wid = e.clientX-back.offsetLeft+'px';
+////            var hei = e.clientY-back.offsetTop+'px';
+//            if(e.clientX-)
+//            console.log(wid);
+//            back.style.width = wid;
+//            back.style.height = hei;
+//        };
+//        document.onmouseup = function(){
+//            document.onmousemove = null;
+//            document.onmouseup = null;
+//        }
+//    }
+
+    big.onclick = function () {
+        x+=2;
+        y = x*yscale;
+        z = x*zscale;
+        console.log(x+','+y+','+','+z)
+        console.log(x,y,z)
+        draw(x,y,z);
+    };
+    tiny.onclick = function () {
+        x-=2;
+        y = x*yscale;
+        z = x*zscale;
+        console.log(x+','+y+','+','+z)
+        console.log(x,y,z)
+        draw(x,y,z);
+    }
+
+    $('#draw_btn').click(function () {
+        var xx = parseInt($('#x').val());
+        var yy = parseInt($('#y').val());
+        var zz = parseInt($('#z').val());
+        if(xx!=''&&yy!=''&&zz!=''){
+            x=xx;
+            y=yy;
+            z=zz;
+            yscale = y/x;
+            zscale = z/x;
+            console.log(x,y,z)
+            draw(x,y,z);
+        }
+    })
+    $('#left_btn').click(function () {
+        xdeg+=2;
+        $('#cube').css('transform', 'rotateX(0deg) rotateY('+xdeg+'deg) rotateZ(0deg) perspective('+x+'px)')
+    })
+    $('#right_btn').click(function () {
+        xdeg-=2;
+        $('#cube').css('transform', 'rotateX(0deg) rotateY('+xdeg+'deg) rotateZ(0deg) perspective('+x+'px)')
+    })
+
+
+</script>
+</html>
