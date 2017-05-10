@@ -102,6 +102,6 @@ http.listen(3000, function(){
 });
 ```
 
-- 打开 index.html 或者 http://localhost:3000/socket页面 输入昵称后  即可使用聊天服务 
+- 打开 index.html 或者 http://localhost:3000/socket 页面 输入昵称后  即可使用聊天服务  
 
 ## 有帮助的话 点星呀^_^  please click on the star，think you。
